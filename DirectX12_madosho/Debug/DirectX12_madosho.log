@@ -1,5 +1,2 @@
 ﻿  main.cpp
-C:\Users\kis11\source\repos\DirectX12_madosho\DirectX12_madosho\main.cpp(53,42): error C2440: '型キャスト': 'overloaded-function' から 'WNDPROC' に変換できません。
-C:\Users\kis11\source\repos\DirectX12_madosho\DirectX12_madosho\main.cpp(53,18): message : スコープ内でこの名前を指定された関数でターゲット型に一致するものはありません。
-C:\Users\kis11\source\repos\DirectX12_madosho\DirectX12_madosho\main.cpp(59,21): warning C4838: 'const unsigned int' から 'LONG' への変換には縮小変換が必要です
-C:\Users\kis11\source\repos\DirectX12_madosho\DirectX12_madosho\main.cpp(59,35): warning C4838: 'const unsigned int' から 'LONG' への変換には縮小変換が必要です
+  DirectX12_madosho.vcxproj -> C:\Users\kis11\source\repos\DirectX12_madosho\Debug\DirectX12_madosho.exe

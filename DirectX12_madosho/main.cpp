@@ -41,6 +41,8 @@ const unsigned int WINDOW_HEIGHT = 720;
 
 ID3D12Device* _dev = nullptr;
 IDXGIFactory6* _dxgiFactory = nullptr;
+ID3D12CommandAllocator* _cmdAllocator = nullptr;
+ID3D12GraphicsCommandList* _cmdList = nullptr;
 IDXGISwapChain4* _swapChain = nullptr;
 
 #ifdef _DEBUG
@@ -91,7 +93,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 
 	//もし失敗する場合はIDXGIFactory4*にしてみる
-	auto result = CreateDXGIFactory1(IID_PPV_ARGS(&_dxgiFactory));
+	if (FAILED(CreateDXGIFactory2(DXGI_CREATE_FACTORY_DEBUG, IID_PPV_ARGS(&_dxgiFactory))))
+	{
+		if (FAILED(CreateDXGIFactory2(0, IID_PPV_ARGS(&_dxgiFactory))))
+		{
+			return -1;
+		}
+	}
+	//auto result = CreateDXGIFactory1(IID_PPV_ARGS(&_dxgiFactory));
 
 	vector<IDXGIAdapter*> adapters;
 
@@ -138,6 +147,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		D3D_FEATURE_LEVEL_11_0,
 	};
 
+	HRESULT result = S_OK;
+
 	D3D_FEATURE_LEVEL featureLevel;
 	for (auto l : levels)
 	{
@@ -149,7 +160,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 	}
 
+	// コマンドリストとコマンドアロケーターを作成していく
+	result = _dev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_cmdAllocator));
 
+	result = _dev->CreateCommandList(
+		0,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
+		_cmdAllocator,
+		nullptr,
+		IID_PPV_ARGS(&_cmdList)
+	);
 
 
 
@@ -178,6 +198,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		{
 			break;
 		}
+
+		//コマンドリストの実行
+
 	}
 	
 	//もうクラスは使わないので登録解除する

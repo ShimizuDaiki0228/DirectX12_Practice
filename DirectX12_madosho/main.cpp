@@ -39,16 +39,11 @@ LRESULT WindowProcedure(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 const unsigned int WINDOW_WIDTH = 1280;
 const unsigned int WINDOW_HEIGHT = 720;
 
-const D3D12_COMMAND_LIST_TYPE COMMAND_LIST_TYPE = D3D12_COMMAND_LIST_TYPE_DIRECT;
-
-
 ID3D12Device* _dev = nullptr;
 IDXGIFactory6* _dxgiFactory = nullptr;
 ID3D12CommandAllocator* _cmdAllocator = nullptr;
 ID3D12GraphicsCommandList* _cmdList = nullptr;
-ID3D12CommandQueue* _cmdQueue = nullptr;
 IDXGISwapChain4* _swapChain = nullptr;
-
 
 #ifdef _DEBUG
 int main()
@@ -105,6 +100,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			return -1;
 		}
 	}
+	//auto result = CreateDXGIFactory1(IID_PPV_ARGS(&_dxgiFactory));
 
 	vector<IDXGIAdapter*> adapters;
 
@@ -165,26 +161,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	}
 
 	// コマンドリストとコマンドアロケーターを作成していく
-	result = _dev->CreateCommandAllocator(COMMAND_LIST_TYPE, IID_PPV_ARGS(&_cmdAllocator));
+	result = _dev->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&_cmdAllocator));
 
 	result = _dev->CreateCommandList(
 		0,
-		COMMAND_LIST_TYPE,
+		D3D12_COMMAND_LIST_TYPE_DIRECT,
 		_cmdAllocator,
 		nullptr,
 		IID_PPV_ARGS(&_cmdList)
 	);
 
-	////コマンドキューの実態を作成
-	//D3D12_COMMAND_QUEUE_DESC cmdQueueDesc = {};
-	////タイムアウト無し
-	//cmdQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
-	//// アダプターを1つしか使わないときは0でよい
-	//cmdQueueDesc.NodeMask = 0;
-	////プライオリティは特に指定しない
-	//cmdQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
-	////コマンドリストと合わせる
-	//cmdQueueDesc.Type = COMMAND_LIST_TYPE;
+
+
+
 
 
 

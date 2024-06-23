@@ -45,6 +45,7 @@ ID3D12Device* _dev = nullptr;
 IDXGIFactory6* _dxgiFactory = nullptr;
 ID3D12CommandAllocator* _cmdAllocator = nullptr;
 ID3D12GraphicsCommandList* _cmdList = nullptr;
+ID3D12CommandQueue* _cmdQueue = nullptr;
 IDXGISwapChain4* _swapChain = nullptr;
 
 #ifdef _DEBUG
@@ -184,10 +185,45 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	cmdQueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
 	//コマンドリストと合わせる
 	cmdQueueDesc.Type = COMMAND_LIST_TYPE;
+	//キュー生成
+	result = _dev->CreateCommandQueue(&cmdQueueDesc, IID_PPV_ARGS(&_cmdQueue));
 
 
+#pragma region SwapChain
+	DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
 
+	swapchainDesc.Width = WINDOW_WIDTH; // 画面解像度
+	swapchainDesc.Height = WINDOW_HEIGHT; // 画面解像度
+	swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; //ピクセルフォーマット
+	swapchainDesc.Stereo = false; // ステレオ表示フラグ(3Dディスプレイのステレオモード)
+	swapchainDesc.SampleDesc.Count = 1; //マルチサンプルの指定 Countは1でよい
+	swapchainDesc.SampleDesc.Quality = 0; // Qualityは0でよい
+	swapchainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER; // DXGI_USAGE_BACK_BUFFERでよい
+	swapchainDesc.BufferCount = 2; // ダブルバッファなら2でよい
 
+	// バックバッファは伸び縮み可能
+	swapchainDesc.Scaling = DXGI_SCALING_STRETCH;
+
+	//フリップ後は速やかに破壊
+	swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+
+	// 特に指定なし
+	swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+
+	//ウインドウとフルスクリーン切り替え可能
+	swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+	result = _dxgiFactory->CreateSwapChainForHwnd(
+		_cmdQueue, // コマンドキューオブジェクト
+		hwnd, // ウインドウハンドル
+		&swapchainDesc, //スワップチェーン設定
+		nullptr,
+		nullptr,
+		(IDXGISwapChain1**)&_swapChain // スワップチェーンオブジェクト取得用
+	);
+#pragma endregion
+	
+	
 
 	ShowWindow(hwnd, SW_SHOW); // ウインドウ表示
 	//getchar();
@@ -209,6 +245,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		}
 
 		//コマンドリストの実行
+
 
 	}
 	
